@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\StockTransactionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,4 +35,8 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::apiResource('categories', CategoryController::class);
     Route::get('products/low-stock', [ProductController::class, 'lowStock']);
     Route::apiResource('products', ProductController::class);
+
+    // Stock transactions
+    Route::get('products/{product}/transactions', [StockTransactionController::class, 'index']);
+    Route::post('stock-transactions', [StockTransactionController::class, 'store']);
 });
