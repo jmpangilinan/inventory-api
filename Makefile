@@ -53,6 +53,9 @@ lint:
 lint-check:
 	docker-compose exec app ./vendor/bin/pint --test
 
+analyse:
+	docker-compose exec app ./vendor/bin/phpstan analyse --no-progress --memory-limit=512M
+
 # ── API Docs ──────────────────────────────────────────────
 docs:
 	$(ARTISAN) l5-swagger:generate
@@ -64,4 +67,4 @@ require:
 require-dev:
 	$(COMPOSER) require --dev $(pkg)
 
-.PHONY: up down build logs shell install setup migrate migrate-fresh seed test test-coverage lint lint-check docs require require-dev
+.PHONY: up down build logs shell install setup migrate migrate-fresh seed test test-coverage lint lint-check analyse docs require require-dev
