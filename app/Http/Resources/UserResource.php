@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property string $name
  * @property string $email
- * @property \Illuminate\Support\Carbon $created_at
- * @mixin \App\Models\User
+ * @property Carbon $created_at
+ *
+ * @mixin User
  */
 class UserResource extends JsonResource
 {
