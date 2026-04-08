@@ -10,11 +10,7 @@ class RepositoryServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // Bindings will be added here as repositories are created.
-        // Example:
-        // $this->app->bind(
-        //     \App\Repositories\Interfaces\ProductRepositoryInterface::class,
-        //     \App\Repositories\Eloquent\ProductRepository::class,
-        // );
+        // Intentionally empty — repository interface bindings are added here
+        // as each feature repository is implemented. See docs/adr/001-repository-pattern.md
     }
 }
