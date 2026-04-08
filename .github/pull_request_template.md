@@ -15,10 +15,17 @@ make migrate-fresh
 make test
 ```
 
-## Checklist
-- [ ] Tests written and passing (`make test`)
-- [ ] Code style clean (`make lint-check`)
-- [ ] Static analysis passing (`make analyse`)
+## Type of change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Refactor / chore
+- [ ] Documentation
+
+## Pre-push checklist
+- [ ] `make lint-check` passes (Pint — PSR-12)
+- [ ] `make analyse` passes (Larastan level 6)
+- [ ] `make test-coverage` passes (PHPUnit — ≥80% coverage)
+- [ ] New code has corresponding tests
 - [ ] Migrations included (if schema changed)
 - [ ] `.env.example` updated (if new env vars added)
-- [ ] API docs updated (if endpoints added/changed)
+- [ ] No hardcoded secrets or `http://` URLs

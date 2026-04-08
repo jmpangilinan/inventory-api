@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\DeviceWebhookController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\StockTransactionController;
 use App\Http\Middleware\VerifyDeviceSignature;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,10 +21,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/health', fn () => response()->json(['status' => 'ok']));
+Route::get('/health', function () {
+    try {
+        DB::connection()->getPdo();
+        $db = 'ok';
+    } catch (Exception) {
+        $db = 'unavailable';
+    }
+
+    $status = $db === 'ok' ? 'ok' : 'degraded';
+    $code = $db === 'ok' ? 200 : 503;
+
+    return response()->json(['status' => $status, 'database' => $db], $code);
+});
 
 // Auth
-Route::prefix('auth')->group(function (): void {
+Route::prefix('auth')->middleware('throttle:30,1')->group(function (): void {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 
