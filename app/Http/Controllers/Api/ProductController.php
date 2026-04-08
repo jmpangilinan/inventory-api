@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\ListProductRequest;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
@@ -20,10 +21,16 @@ class ProductController extends Controller
 
     #[OA\Get(
         path: '/products',
-        summary: 'List all products (paginated)',
+        summary: 'List all products (paginated, filterable)',
         security: [['bearerAuth' => []]],
         tags: ['Products'],
-        parameters: [new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer', default: 1))],
+        parameters: [
+            new OA\Parameter(name: 'search', in: 'query', description: 'Filter by name or SKU', schema: new OA\Schema(type: 'string')),
+            new OA\Parameter(name: 'category_id', in: 'query', description: 'Filter by category', schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'is_active', in: 'query', description: 'Filter by active status', schema: new OA\Schema(type: 'boolean')),
+            new OA\Parameter(name: 'per_page', in: 'query', description: 'Items per page (1–100)', schema: new OA\Schema(type: 'integer', default: 15)),
+            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer', default: 1)),
+        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -35,11 +42,15 @@ class ProductController extends Controller
                 ])
             ),
             new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 422, description: 'Validation error', content: new OA\JsonContent(ref: '#/components/schemas/ValidationError')),
         ]
     )]
-    public function index(): AnonymousResourceCollection
+    public function index(ListProductRequest $request): AnonymousResourceCollection
     {
-        return ProductResource::collection($this->productService->list());
+        $filters = $request->only(['search', 'category_id', 'is_active']);
+        $perPage = (int) $request->input('per_page', 15);
+
+        return ProductResource::collection($this->productService->list($filters, $perPage));
     }
 
     #[OA\Post(

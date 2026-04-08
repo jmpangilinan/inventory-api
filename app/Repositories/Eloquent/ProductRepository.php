@@ -58,4 +58,22 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
 
         return $product;
     }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return LengthAwarePaginator<int, Product>
+     */
+    public function paginateWithFilters(array $filters, int $perPage = 15): LengthAwarePaginator
+    {
+        return Product::query()
+            ->with('category')
+            ->when(isset($filters['search']), fn ($q) => $q->where(function ($q) use ($filters): void {
+                $q->where('name', 'like', "%{$filters['search']}%")
+                    ->orWhere('sku', 'like', "%{$filters['search']}%");
+            }))
+            ->when(isset($filters['category_id']), fn ($q) => $q->where('category_id', $filters['category_id']))
+            ->when(isset($filters['is_active']), fn ($q) => $q->where('is_active', $filters['is_active']))
+            ->latest()
+            ->paginate($perPage);
+    }
 }
