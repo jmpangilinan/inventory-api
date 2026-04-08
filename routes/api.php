@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,4 +32,6 @@ Route::prefix('auth')->group(function (): void {
 // Protected routes
 Route::middleware('auth:sanctum')->group(function (): void {
     Route::apiResource('categories', CategoryController::class);
+    Route::get('products/low-stock', [ProductController::class, 'lowStock']);
+    Route::apiResource('products', ProductController::class);
 });
