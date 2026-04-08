@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, develop]
   pull_request:
-    branches: [main, develop]
+    branches: [develop]  # PRs to main always come from develop (already CI-verified)
 
 jobs:
   lint:
