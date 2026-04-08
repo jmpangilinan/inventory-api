@@ -8,14 +8,19 @@ use App\Enums\StockReason;
 use App\Enums\TransactionType;
 use App\Events\LowStockDetected;
 use App\Events\StockTransactionRecorded;
+use App\Exceptions\NotFoundException;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\StockTransaction;
 use App\Models\User;
+use App\Repositories\Interfaces\StockTransactionRepositoryInterface;
 use Database\Seeders\RoleSeeder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tests\TestCase;
 
 class StockTransactionTest extends TestCase
@@ -175,5 +180,63 @@ class StockTransactionTest extends TestCase
     public function store_requires_authentication(): void
     {
         $this->postJson('/api/v1/stock-transactions', [])->assertUnauthorized();
+    }
+
+    #[Test]
+    public function stock_quantity_is_not_changed_if_transaction_record_fails(): void
+    {
+        $this->instance(
+            StockTransactionRepositoryInterface::class,
+            new class implements StockTransactionRepositoryInterface
+            {
+                public function all(): Collection
+                {
+                    return new Collection;
+                }
+
+                public function paginate(int $perPage = 15): LengthAwarePaginator
+                {
+                    return new LengthAwarePaginator([], 0, $perPage);
+                }
+
+                public function findById(int $id): StockTransaction
+                {
+                    throw new NotFoundException('StockTransaction');
+                }
+
+                public function create(array $data): StockTransaction
+                {
+                    throw new RuntimeException('DB write failed');
+                }
+
+                public function update(int $id, array $data): StockTransaction
+                {
+                    throw new NotFoundException('StockTransaction');
+                }
+
+                public function delete(int $id): bool
+                {
+                    return false;
+                }
+
+                public function paginateByProduct(int $productId, int $perPage = 15): LengthAwarePaginator
+                {
+                    return new LengthAwarePaginator([], 0, $perPage);
+                }
+            }
+        );
+
+        $this->actingAsUser()->postJson('/api/v1/stock-transactions', [
+            'product_id' => $this->product->id,
+            'type' => TransactionType::In->value,
+            'reason' => StockReason::Purchase->value,
+            'quantity' => 20,
+        ]);
+
+        // Stock must remain unchanged — the DB::transaction() rolled back.
+        $this->assertDatabaseHas('products', [
+            'id' => $this->product->id,
+            'stock_quantity' => 50,
+        ]);
     }
 }
