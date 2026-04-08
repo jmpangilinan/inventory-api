@@ -47,4 +47,15 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
 
         return $product;
     }
+
+    public function findByIdWithLock(int $id): Product
+    {
+        $product = Product::query()->lockForUpdate()->find($id);
+
+        if (! $product) {
+            throw new NotFoundException('Product');
+        }
+
+        return $product;
+    }
 }
