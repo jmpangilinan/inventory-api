@@ -23,6 +23,12 @@ RUN docker-php-ext-install \
     gd \
     zip
 
+# Install Xdebug for code coverage
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
+COPY docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
 # Install Composer
 COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 

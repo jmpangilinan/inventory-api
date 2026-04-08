@@ -1,0 +1,17 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+
+    level: 6
+
+    ignoreErrors:
+        # L5_SWAGGER_CONST_HOST is a runtime constant injected by darkaonline/l5-swagger
+        # via config('l5-swagger.defaults.constants') — not visible at static analysis time.
+        - '#Constant L5_SWAGGER_CONST_HOST not found\.#'
+
+    excludePaths:
+
+
