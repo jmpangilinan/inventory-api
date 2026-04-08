@@ -68,8 +68,10 @@ class BaseRepositoryTest extends TestCase
     #[Test]
     public function create_persists_and_returns_model(): void
     {
-        $data = User::factory()->make()->toArray();
-        $data['password'] = 'password';
+        $data = collect(User::factory()->make()->toArray())
+            ->only(['name', 'email'])
+            ->put('password', 'password')
+            ->all();
 
         $result = $this->repository->create($data);
 
