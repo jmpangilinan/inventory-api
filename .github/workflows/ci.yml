@@ -129,6 +129,9 @@ jobs:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
     needs: test
+    # Dependabot PRs cannot access repository secrets — skip SonarCloud.
+    # Quality gate still runs on the merge commit to develop/main.
+    if: github.actor != 'dependabot[bot]'
     steps:
       - uses: actions/checkout@v4
         with:
