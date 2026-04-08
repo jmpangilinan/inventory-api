@@ -20,6 +20,7 @@ class StockTransactionController extends Controller
 
     #[OA\Get(
         path: '/products/{product}/transactions',
+        operationId: 'stockTransactionsList',
         summary: 'List stock transactions for a product',
         security: [['bearerAuth' => []]],
         tags: ['Stock Transactions'],
@@ -50,6 +51,7 @@ class StockTransactionController extends Controller
 
     #[OA\Post(
         path: '/stock-transactions',
+        operationId: 'stockTransactionsCreate',
         summary: 'Record a stock movement',
         description: 'Supports stock-in (purchase/return), stock-out (sale/damage/expired), and adjustments (correction/initial_stock). Insufficient stock on stock-out returns 422.',
         security: [['bearerAuth' => []]],
