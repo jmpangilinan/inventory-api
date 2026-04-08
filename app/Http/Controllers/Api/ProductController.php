@@ -21,6 +21,7 @@ class ProductController extends Controller
 
     #[OA\Get(
         path: '/products',
+        operationId: 'productsList',
         summary: 'List all products (paginated, filterable)',
         security: [['bearerAuth' => []]],
         tags: ['Products'],
@@ -55,6 +56,7 @@ class ProductController extends Controller
 
     #[OA\Post(
         path: '/products',
+        operationId: 'productsCreate',
         summary: 'Create a product',
         security: [['bearerAuth' => []]],
         requestBody: new OA\RequestBody(
@@ -91,6 +93,7 @@ class ProductController extends Controller
 
     #[OA\Get(
         path: '/products/{id}',
+        operationId: 'productsShow',
         summary: 'Get a product',
         security: [['bearerAuth' => []]],
         tags: ['Products'],
@@ -108,6 +111,7 @@ class ProductController extends Controller
 
     #[OA\Put(
         path: '/products/{id}',
+        operationId: 'productsUpdate',
         summary: 'Update a product',
         security: [['bearerAuth' => []]],
         requestBody: new OA\RequestBody(
@@ -139,6 +143,7 @@ class ProductController extends Controller
 
     #[OA\Delete(
         path: '/products/{id}',
+        operationId: 'productsDelete',
         summary: 'Soft-delete a product',
         security: [['bearerAuth' => []]],
         tags: ['Products'],
@@ -158,6 +163,7 @@ class ProductController extends Controller
 
     #[OA\Get(
         path: '/products/low-stock',
+        operationId: 'productsLowStock',
         summary: 'List products at or below their low-stock threshold',
         security: [['bearerAuth' => []]],
         tags: ['Products'],
