@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DeviceWebhookController;
@@ -41,6 +42,9 @@ Route::middleware('auth:sanctum')->group(function (): void {
     // Stock transactions
     Route::get('products/{product}/transactions', [StockTransactionController::class, 'index']);
     Route::post('stock-transactions', [StockTransactionController::class, 'store']);
+
+    // Audit logs — Admin only (enforced in ListAuditLogRequest::authorize)
+    Route::get('audit-logs', [AuditLogController::class, 'index']);
 });
 
 // Device webhook — HMAC-SHA256 verified, no Sanctum auth
