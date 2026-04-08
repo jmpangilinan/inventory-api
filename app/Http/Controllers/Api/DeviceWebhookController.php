@@ -19,6 +19,7 @@ class DeviceWebhookController extends Controller
 
     #[OA\Post(
         path: '/device/webhook',
+        operationId: 'deviceWebhook',
         summary: 'Receive a signed payload from a hardware device',
         description: 'No Bearer token required. The request must carry an HMAC-SHA256 signature in the `X-Device-Signature: sha256=<hmac>` header, computed over the raw JSON body using the shared `DEVICE_WEBHOOK_SECRET`. The transaction is recorded with `reason=device_scanned` under a system user.',
         tags: ['Device Webhook'],

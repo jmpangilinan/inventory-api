@@ -20,6 +20,7 @@ class CategoryController extends Controller
 
     #[OA\Get(
         path: '/categories',
+        operationId: 'categoriesList',
         summary: 'List all categories',
         security: [['bearerAuth' => []]],
         tags: ['Categories'],
@@ -43,6 +44,7 @@ class CategoryController extends Controller
 
     #[OA\Post(
         path: '/categories',
+        operationId: 'categoriesCreate',
         summary: 'Create a category',
         security: [['bearerAuth' => []]],
         requestBody: new OA\RequestBody(
@@ -74,6 +76,7 @@ class CategoryController extends Controller
 
     #[OA\Get(
         path: '/categories/{id}',
+        operationId: 'categoriesShow',
         summary: 'Get a category',
         security: [['bearerAuth' => []]],
         tags: ['Categories'],
@@ -93,6 +96,7 @@ class CategoryController extends Controller
 
     #[OA\Put(
         path: '/categories/{id}',
+        operationId: 'categoriesUpdate',
         summary: 'Update a category',
         security: [['bearerAuth' => []]],
         requestBody: new OA\RequestBody(
@@ -121,6 +125,7 @@ class CategoryController extends Controller
 
     #[OA\Delete(
         path: '/categories/{id}',
+        operationId: 'categoriesDelete',
         summary: 'Soft-delete a category',
         security: [['bearerAuth' => []]],
         tags: ['Categories'],

@@ -20,6 +20,7 @@ class AuthController extends Controller
 
     #[OA\Post(
         path: '/auth/register',
+        operationId: 'authRegister',
         summary: 'Register a new user',
         requestBody: new OA\RequestBody(
             required: true,
@@ -62,6 +63,7 @@ class AuthController extends Controller
 
     #[OA\Post(
         path: '/auth/login',
+        operationId: 'authLogin',
         summary: 'Log in and receive a Bearer token',
         requestBody: new OA\RequestBody(
             required: true,
@@ -101,6 +103,7 @@ class AuthController extends Controller
 
     #[OA\Post(
         path: '/auth/logout',
+        operationId: 'authLogout',
         summary: 'Revoke the current Bearer token',
         security: [['bearerAuth' => []]],
         tags: ['Auth'],
@@ -118,6 +121,7 @@ class AuthController extends Controller
 
     #[OA\Get(
         path: '/auth/me',
+        operationId: 'authMe',
         summary: 'Get the authenticated user',
         security: [['bearerAuth' => []]],
         tags: ['Auth'],
