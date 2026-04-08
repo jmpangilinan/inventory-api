@@ -17,4 +17,6 @@ interface ProductRepositoryInterface extends BaseRepositoryInterface
     public function findLowStock(): Collection;
 
     public function findBySku(string $sku): Product;
+
+    public function findByIdWithLock(int $id): Product;
 }

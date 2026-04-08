@@ -71,4 +71,23 @@ class ProductRepositoryTest extends TestCase
 
         $this->repository->findBySku('NON-EXISTENT');
     }
+
+    #[Test]
+    public function find_by_id_with_lock_returns_correct_product(): void
+    {
+        $product = Product::factory()->create(['category_id' => $this->category->id]);
+
+        $result = $this->repository->findByIdWithLock($product->id);
+
+        $this->assertSame($product->id, $result->id);
+    }
+
+    #[Test]
+    public function find_by_id_with_lock_throws_not_found_exception_when_missing(): void
+    {
+        $this->expectException(NotFoundException::class);
+        $this->expectExceptionMessage('Product not found.');
+
+        $this->repository->findByIdWithLock(999);
+    }
 }
