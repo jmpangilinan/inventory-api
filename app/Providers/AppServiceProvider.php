@@ -10,6 +10,7 @@ use App\Listeners\AuditStockListener;
 use App\Listeners\NotifyLowStockListener;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
     {
         // Strict mode: throw on lazy loading, missing attributes, and silently
         // discarded fillable writes — catches N+1s and typos at development time.
+        if ($this->app->isProduction()) {
+            URL::forceScheme('https');
+        }
+
         Model::shouldBeStrict(! $this->app->isProduction());
 
         Event::listen(LowStockDetected::class, NotifyLowStockListener::class);
