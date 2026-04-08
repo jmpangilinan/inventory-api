@@ -196,4 +196,49 @@ class ProductTest extends TestCase
         $response->assertOk()
             ->assertJsonCount(2, 'data');
     }
+
+    #[Test]
+    public function can_filter_products_by_search(): void
+    {
+        Product::factory()->create(['category_id' => $this->category->id, 'name' => 'Laptop Pro', 'sku' => 'LAP-001']);
+        Product::factory()->create(['category_id' => $this->category->id, 'name' => 'Mouse', 'sku' => 'MOU-001']);
+
+        $response = $this->actingAsUser()->getJson('/api/v1/products?search=Laptop');
+
+        $response->assertOk()->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.name', 'Laptop Pro');
+    }
+
+    #[Test]
+    public function can_filter_products_by_category(): void
+    {
+        $other = Category::factory()->create();
+        Product::factory()->count(2)->create(['category_id' => $this->category->id]);
+        Product::factory()->count(3)->create(['category_id' => $other->id]);
+
+        $response = $this->actingAsUser()->getJson("/api/v1/products?category_id={$this->category->id}");
+
+        $response->assertOk()->assertJsonCount(2, 'data');
+    }
+
+    #[Test]
+    public function can_filter_products_by_active_status(): void
+    {
+        Product::factory()->count(2)->create(['category_id' => $this->category->id, 'is_active' => true]);
+        Product::factory()->count(1)->create(['category_id' => $this->category->id, 'is_active' => false]);
+
+        $response = $this->actingAsUser()->getJson('/api/v1/products?is_active=0');
+
+        $response->assertOk()->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.is_active', false);
+    }
+
+    #[Test]
+    public function filter_rejects_invalid_category_id(): void
+    {
+        $response = $this->actingAsUser()->getJson('/api/v1/products?category_id=999');
+
+        $response->assertUnprocessable()
+            ->assertJsonValidationErrors(['category_id']);
+    }
 }

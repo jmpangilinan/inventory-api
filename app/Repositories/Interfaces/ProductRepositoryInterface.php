@@ -19,4 +19,10 @@ interface ProductRepositoryInterface extends BaseRepositoryInterface
     public function findBySku(string $sku): Product;
 
     public function findByIdWithLock(int $id): Product;
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return LengthAwarePaginator<int, Product>
+     */
+    public function paginateWithFilters(array $filters, int $perPage = 15): LengthAwarePaginator;
 }

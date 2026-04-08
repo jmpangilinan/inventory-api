@@ -16,11 +16,13 @@ class ProductService
         private readonly ProductRepositoryInterface $productRepository
     ) {}
 
-    /** @return LengthAwarePaginator<int, Product> */
-    public function list(int $perPage = 15): LengthAwarePaginator
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return LengthAwarePaginator<int, Product>
+     */
+    public function list(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        /** @var LengthAwarePaginator<int, Product> */
-        return $this->productRepository->paginate($perPage);
+        return $this->productRepository->paginateWithFilters($filters, $perPage);
     }
 
     public function findById(int $id): Product
