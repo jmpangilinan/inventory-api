@@ -73,6 +73,20 @@ use OpenApi\Attributes as OA;
     ]
 )]
 #[OA\Schema(
+    schema: 'AuditLog',
+    properties: [
+        new OA\Property(property: 'id', type: 'integer', example: 1),
+        new OA\Property(property: 'log_name', type: 'string', example: 'default'),
+        new OA\Property(property: 'description', type: 'string', example: 'created'),
+        new OA\Property(property: 'subject_type', type: 'string', nullable: true, example: 'App\\Models\\Product'),
+        new OA\Property(property: 'subject_id', type: 'integer', nullable: true, example: 1),
+        new OA\Property(property: 'causer_type', type: 'string', nullable: true, example: 'App\\Models\\User'),
+        new OA\Property(property: 'causer_id', type: 'integer', nullable: true, example: 1),
+        new OA\Property(property: 'properties', type: 'object', nullable: true),
+        new OA\Property(property: 'created_at', type: 'string', format: 'date-time'),
+    ]
+)]
+#[OA\Schema(
     schema: 'MessageResponse',
     properties: [
         new OA\Property(property: 'message', type: 'string'),
