@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StockTransaction\ListStockTransactionRequest;
 use App\Http\Requests\StockTransaction\StoreStockTransactionRequest;
 use App\Http\Resources\StockTransactionResource;
 use App\Services\StockTransactionService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,6 +26,7 @@ class StockTransactionController extends Controller
         tags: ['Stock Transactions'],
         parameters: [
             new OA\Parameter(name: 'product', in: 'path', required: true, description: 'Product ID', schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'per_page', in: 'query', description: 'Items per page (1–100)', schema: new OA\Schema(type: 'integer', default: 15)),
             new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer', default: 1)),
         ],
         responses: [
@@ -42,11 +43,13 @@ class StockTransactionController extends Controller
             new OA\Response(response: 404, description: 'Product not found'),
         ]
     )]
-    public function index(Request $request, int $productId): AnonymousResourceCollection
+    public function index(ListStockTransactionRequest $request, int $productId): AnonymousResourceCollection
     {
-        $transactions = $this->transactionService->listByProduct($productId);
+        $perPage = (int) $request->input('per_page', 15);
 
-        return StockTransactionResource::collection($transactions);
+        return StockTransactionResource::collection(
+            $this->transactionService->listByProduct($productId, $perPage)
+        );
     }
 
     #[OA\Post(

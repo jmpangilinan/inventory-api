@@ -46,6 +46,30 @@ class CategoryTest extends TestCase
     }
 
     #[Test]
+    public function list_supports_per_page(): void
+    {
+        Category::factory()->count(5)->create();
+
+        $response = $this->actingAsUser()->getJson('/api/v1/categories?per_page=2');
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('meta.per_page', 2);
+    }
+
+    #[Test]
+    public function list_filters_by_is_active(): void
+    {
+        Category::factory()->count(2)->create(['is_active' => true]);
+        Category::factory()->count(3)->create(['is_active' => false]);
+
+        $response = $this->actingAsUser()->getJson('/api/v1/categories?is_active=1');
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data');
+    }
+
+    #[Test]
     public function list_requires_authentication(): void
     {
         $this->getJson('/api/v1/categories')->assertUnauthorized();

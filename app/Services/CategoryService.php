@@ -15,11 +15,13 @@ class CategoryService
         private readonly CategoryRepositoryInterface $categoryRepository
     ) {}
 
-    /** @return LengthAwarePaginator<int, Category> */
-    public function list(int $perPage = 15): LengthAwarePaginator
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return LengthAwarePaginator<int, Category>
+     */
+    public function list(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        /** @var LengthAwarePaginator<int, Category> */
-        return $this->categoryRepository->paginate($perPage);
+        return $this->categoryRepository->paginateWithFilters($filters, $perPage);
     }
 
     public function findById(int $id): Category

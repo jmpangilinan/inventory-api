@@ -16,6 +16,18 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
         parent::__construct($model);
     }
 
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return LengthAwarePaginator<int, Category>
+     */
+    public function paginateWithFilters(array $filters, int $perPage = 15): LengthAwarePaginator
+    {
+        return Category::query()
+            ->when(isset($filters['is_active']), fn ($q) => $q->where('is_active', $filters['is_active']))
+            ->latest()
+            ->paginate($perPage);
+    }
+
     /** @return LengthAwarePaginator<int, Category> */
     public function paginateActive(int $perPage = 15): LengthAwarePaginator
     {
