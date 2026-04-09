@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [develop]  # PRs to main always come from develop (already CI-verified)
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     name: Code Style (Pint)
