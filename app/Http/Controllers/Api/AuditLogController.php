@@ -30,7 +30,15 @@ class AuditLogController extends Controller
             new OA\Parameter(name: 'per_page', in: 'query', schema: new OA\Schema(type: 'integer', default: 15)),
         ],
         responses: [
-            new OA\Response(response: 200, description: 'Paginated audit log list'),
+            new OA\Response(
+                response: 200,
+                description: 'Paginated audit log list',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/AuditLog')),
+                    new OA\Property(property: 'meta', type: 'object'),
+                    new OA\Property(property: 'links', type: 'object'),
+                ])
+            ),
             new OA\Response(response: 401, description: 'Unauthenticated'),
             new OA\Response(response: 403, description: 'Forbidden — Admin role required'),
         ]
