@@ -140,7 +140,7 @@ jobs:
           name: coverage-report
 
       - name: SonarCloud Scan
-        # Dependabot PRs cannot access repository secrets — skip the scan but let the job pass.
+        # Dependabot PRs only update dependencies — no app code changes to analyse.
         if: github.actor != 'dependabot[bot]'
         uses: SonarSource/sonarcloud-github-action@master
         env:
