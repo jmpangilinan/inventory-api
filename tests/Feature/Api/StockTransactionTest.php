@@ -60,7 +60,25 @@ class StockTransactionTest extends TestCase
         $response = $this->actingAsUser()
             ->getJson("/api/v1/products/{$this->product->id}/transactions");
 
-        $response->assertOk()->assertJsonCount(3, 'data');
+        $response->assertOk()
+            ->assertJsonCount(3, 'data')
+            ->assertJsonStructure(['data', 'meta', 'links']);
+    }
+
+    #[Test]
+    public function list_transactions_supports_per_page(): void
+    {
+        StockTransaction::factory()->count(5)->create([
+            'product_id' => $this->product->id,
+            'user_id' => $this->user->id,
+        ]);
+
+        $response = $this->actingAsUser()
+            ->getJson("/api/v1/products/{$this->product->id}/transactions?per_page=2");
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('meta.per_page', 2);
     }
 
     #[Test]

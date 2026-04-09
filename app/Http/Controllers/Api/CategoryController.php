@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Category\ListCategoryRequest;
 use App\Http\Requests\Category\StoreCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
@@ -21,25 +22,34 @@ class CategoryController extends Controller
     #[OA\Get(
         path: '/categories',
         operationId: 'categoriesList',
-        summary: 'List all categories',
+        summary: 'List all categories (paginated, filterable)',
         security: [['bearerAuth' => []]],
         tags: ['Categories'],
+        parameters: [
+            new OA\Parameter(name: 'is_active', in: 'query', description: 'Filter by active status', schema: new OA\Schema(type: 'boolean')),
+            new OA\Parameter(name: 'per_page', in: 'query', description: 'Items per page (1–100)', schema: new OA\Schema(type: 'integer', default: 15)),
+            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer', default: 1)),
+        ],
         responses: [
             new OA\Response(
                 response: 200,
-                description: 'List of categories',
+                description: 'Paginated category list',
                 content: new OA\JsonContent(properties: [
                     new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/Category')),
+                    new OA\Property(property: 'meta', type: 'object'),
+                    new OA\Property(property: 'links', type: 'object'),
                 ])
             ),
             new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 422, description: 'Validation error', content: new OA\JsonContent(ref: '#/components/schemas/ValidationError')),
         ]
     )]
-    public function index(): AnonymousResourceCollection
+    public function index(ListCategoryRequest $request): AnonymousResourceCollection
     {
-        $categories = $this->categoryService->list();
+        $filters = $request->only(['is_active']);
+        $perPage = (int) $request->input('per_page', 15);
 
-        return CategoryResource::collection($categories);
+        return CategoryResource::collection($this->categoryService->list($filters, $perPage));
     }
 
     #[OA\Post(
