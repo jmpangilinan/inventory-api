@@ -23,7 +23,8 @@ class ListAuditLogRequest extends FormRequest
             'subject_type' => ['nullable', 'string', 'max:255'],
             'subject_id' => ['nullable', 'integer'],
             'causer_id' => ['nullable', 'integer'],
-            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+            'page' => ['sometimes', 'integer', 'min:1'],
         ];
     }
 }
